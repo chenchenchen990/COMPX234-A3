@@ -27,3 +27,20 @@ class TupleSpace:
         """Initialize an empty tuple space."""
         self.tuples = {}  # Dictionary to store key-value pairs
         self.lock = threading.Lock()  # Lock for thread safety
+
+
+class TupleSpace:
+    """Represents the tuple space with thread-safe operations."""
+
+    def __init__(self):
+        """Initialize an empty tuple space."""
+        self.tuples = {}  # Dictionary to store key-value pairs
+        self.lock = threading.Lock()  # Lock for thread safety
+
+        # Statistics
+        self.total_clients = 0
+        self.total_operations = 0
+        self.total_reads = 0
+        self.total_gets = 0
+        self.total_puts = 0
+        self.total_errors = 0
