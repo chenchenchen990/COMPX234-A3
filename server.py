@@ -98,3 +98,4 @@ def read(self, key):
 def get_statistics(self):
     """Return statistics about the tuple space."""
     with self.lock:
+        num_tuples = len(self.tuples)
