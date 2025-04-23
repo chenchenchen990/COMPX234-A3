@@ -61,3 +61,21 @@ def put(self, key, value):
 
         self.tuples[key] = value
         return 0  # Success
+
+
+def get(self, key):
+    """
+    Remove a tuple from the space and return its value.
+    Returns (value, True) if successful, (None, False) if the key doesn't exist.
+    """
+    with self.lock:
+        self.total_operations += 1
+        self.total_gets += 1
+
+        if key not in self.tuples:
+            self.total_errors += 1
+            return None, False  # Error: key does not exist
+
+        value = self.tuples[key]
+        del self.tuples[key]
+        return value, True  # Success
