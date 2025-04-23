@@ -44,3 +44,20 @@ class TupleSpace:
         self.total_gets = 0
         self.total_puts = 0
         self.total_errors = 0
+
+
+def put(self, key, value):
+    """
+    Add a new tuple to the space if the key doesn't exist.
+    Returns 0 if successful, 1 if the key already exists.
+    """
+    with self.lock:
+        self.total_operations += 1
+        self.total_puts += 1
+
+        if key in self.tuples:
+            self.total_errors += 1
+            return 1  # Error: key already exists
+
+        self.tuples[key] = value
+        return 0  # Success
