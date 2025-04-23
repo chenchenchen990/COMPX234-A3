@@ -79,3 +79,19 @@ def get(self, key):
         value = self.tuples[key]
         del self.tuples[key]
         return value, True  # Success
+
+
+def read(self, key):
+    """
+    Read a tuple's value without removing it.
+    Returns (value, True) if successful, (None, False) if the key doesn't exist.
+    """
+    with self.lock:
+        self.total_operations += 1
+        self.total_reads += 1
+
+        if key not in self.tuples:
+            self.total_errors += 1
+            return None, False  # Error: key does not exist
+
+        return self.tuples[key], True  # Success
