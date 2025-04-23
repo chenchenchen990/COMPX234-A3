@@ -229,3 +229,27 @@ def handle_client(client_socket, addr, tuple_space):
             response_text = f"ERR {key} does not exist"
 
         response = f"{len(response_text) + 4:03d} {response_text}"
+    elif command == 'P':  # PUT
+        # Split key and value
+        space_pos = data.find(' ')
+        if space_pos != -1:
+            key = data[:space_pos]
+            value = data[space_pos + 1:]
+
+            # Validate key and value lengths
+            if len(key) > 999:
+                raise ProtocolError("Key too long (max 999 characters)")
+
+            if len(key) + len(value) + 1 > 970:  # +1 for the space between them
+                raise ProtocolError("Key and value combined too long (max 970 characters)")
+
+            result = tuple_space.put(key, value)
+
+            if result == 0:
+                response_text = f"OK ({key}, {value}) added"
+            else:
+                response_text = f"ERR {key} already exists"
+
+            response = f"{len(response_text) + 4:03d} {response_text}"
+        else:
+            raise ProtocolError("Invalid PUT format, missing value")
