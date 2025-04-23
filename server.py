@@ -255,3 +255,5 @@ def handle_client(client_socket, addr, tuple_space):
             raise ProtocolError("Invalid PUT format, missing value")
     else:
         raise ProtocolError(f"Unknown command '{command}'")
+    # Send the response
+    client_socket.send(response.encode())
