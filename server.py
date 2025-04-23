@@ -108,3 +108,15 @@ def get_statistics(self):
             avg_key_size = 0
             avg_value_size = 0
             avg_tuple_size = 0
+        return {
+            "num_tuples": num_tuples,
+            "avg_tuple_size": avg_tuple_size,
+            "avg_key_size": avg_key_size,
+            "avg_value_size": avg_value_size,
+            "total_clients": self.total_clients,
+            "total_operations": self.total_operations,
+            "total_reads": self.total_reads,
+            "total_gets": self.total_gets,
+            "total_puts": self.total_puts,
+            "total_errors": self.total_errors
+        }
