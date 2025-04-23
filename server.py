@@ -169,3 +169,26 @@ def handle_client(client_socket, addr, tuple_space):
     finally:
         client_socket.close()
         logging.info(f"Connection from {addr} closed")
+    # Calculate how many more bytes we need to receive
+    remaining_bytes = message_size - 3
+
+    if remaining_bytes <= 0:
+        raise ProtocolError("Invalid message size")
+
+    # Receive the command and the rest of the message
+    command_and_data = b""
+    bytes_received = 0
+
+    # Keep receiving until we get all the data or socket closes
+    while bytes_received < remaining_bytes:
+        chunk = client_socket.recv(min(1024, remaining_bytes - bytes_received))
+        if not chunk:  # Socket closed
+            return
+        command_and_data += chunk
+        bytes_received += len(chunk)
+
+    # Decode the data
+    try:
+        command_and_data = command_and_data.decode()
+    except UnicodeDecodeError:
+        raise ProtocolError("Invalid message encoding")
