@@ -95,3 +95,6 @@ def read(self, key):
             return None, False  # Error: key does not exist
 
         return self.tuples[key], True  # Success
+def get_statistics(self):
+    """Return statistics about the tuple space."""
+    with self.lock:
