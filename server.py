@@ -134,3 +134,38 @@ def handle_client(client_socket, addr, tuple_space):
     finally:
         client_socket.close()
         logging.info(f"Connection from {addr} closed")
+
+
+def handle_client(client_socket, addr, tuple_space):
+    """Handle a single client connection."""
+    logging.info(f"New connection from {addr}")
+
+    try:
+        while True:
+            # Receive the message size (first 3 bytes)
+            size_bytes = client_socket.recv(3)
+            if not size_bytes or len(size_bytes) < 3:  # Client disconnected or incomplete message
+                break
+
+            try:
+                # Parse the message size
+                try:
+                    message_size = int(size_bytes.decode())
+                except ValueError:
+                    raise ProtocolError("Invalid message size format")
+
+                if message_size < 7 or message_size > 999:
+                    raise ProtocolError("Message size must be between 7 and 999")
+
+                # Rest of the message handling will be implemented here
+
+            except ProtocolError as pe:
+                error_message = str(pe)
+                response = f"{len(error_message) + 8:03d} ERR {error_message}"
+                client_socket.send(response.encode())
+
+    except Exception as e:
+        logging.error(f"Error handling client {addr}: {e}")
+    finally:
+        client_socket.close()
+        logging.info(f"Connection from {addr} closed")
