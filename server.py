@@ -208,3 +208,14 @@ def handle_client(client_socket, addr, tuple_space):
     response = ""
 
     # Command processing will be implemented here
+    # Process commands
+    if command == 'R':  # READ
+        key = data
+        value, success = tuple_space.read(key)
+
+        if success:
+            response_text = f"OK ({key}, {value}) read"
+        else:
+            response_text = f"ERR {key} does not exist"
+
+        response = f"{len(response_text) + 4:03d} {response_text}"
