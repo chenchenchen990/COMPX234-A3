@@ -16,3 +16,6 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+class ProtocolError(Exception):
+    """Exception raised for errors in the protocol format."""
+    pass
