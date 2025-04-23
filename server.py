@@ -219,3 +219,13 @@ def handle_client(client_socket, addr, tuple_space):
             response_text = f"ERR {key} does not exist"
 
         response = f"{len(response_text) + 4:03d} {response_text}"
+    elif command == 'G':  # GET
+        key = data
+        value, success = tuple_space.get(key)
+
+        if success:
+            response_text = f"OK ({key}, {value}) removed"
+        else:
+            response_text = f"ERR {key} does not exist"
+
+        response = f"{len(response_text) + 4:03d} {response_text}"
