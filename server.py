@@ -99,3 +99,12 @@ def get_statistics(self):
     """Return statistics about the tuple space."""
     with self.lock:
         num_tuples = len(self.tuples)
+        # Calculate average sizes
+        if num_tuples > 0:
+            avg_key_size = sum(len(k) for k in self.tuples.keys()) / num_tuples
+            avg_value_size = sum(len(v) for v in self.tuples.values()) / num_tuples
+            avg_tuple_size = avg_key_size + avg_value_size
+        else:
+            avg_key_size = 0
+            avg_value_size = 0
+            avg_tuple_size = 0
