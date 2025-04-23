@@ -192,3 +192,19 @@ def handle_client(client_socket, addr, tuple_space):
         command_and_data = command_and_data.decode()
     except UnicodeDecodeError:
         raise ProtocolError("Invalid message encoding")
+    # Parse the command
+    if not command_and_data or len(command_and_data) < 1:
+        raise ProtocolError("Missing command")
+
+    command = command_and_data[0]
+
+    # Ensure there's a space after the command
+    if len(command_and_data) > 1 and command_and_data[1] != ' ':
+        raise ProtocolError("Expected space after command")
+
+    # Get the data part (skip the space if present)
+    data = command_and_data[2:] if len(command_and_data) > 2 else ""
+
+    response = ""
+
+    # Command processing will be implemented here
