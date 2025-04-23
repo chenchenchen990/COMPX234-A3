@@ -253,3 +253,5 @@ def handle_client(client_socket, addr, tuple_space):
             response = f"{len(response_text) + 4:03d} {response_text}"
         else:
             raise ProtocolError("Invalid PUT format, missing value")
+    else:
+        raise ProtocolError(f"Unknown command '{command}'")
