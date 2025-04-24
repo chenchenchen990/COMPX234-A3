@@ -262,3 +262,26 @@ def handle_client(client_socket, addr, tuple_space):
         raise ProtocolError(f"Unknown command '{command}'")
     # Send the response
     client_socket.send(response.encode())
+
+
+def display_statistics(tuple_space):
+    """Display statistics about the tuple space every 10 seconds."""
+    while True:
+        time.sleep(10)
+        stats = tuple_space.get_statistics()
+
+        print("\n----- Tuple Space Statistics -----")
+        print(f"Number of tuples: {stats['num_tuples']}")
+        print(f"Average tuple size: {stats['avg_tuple_size']:.2f}")
+        print(f"Average key size: {stats['avg_key_size']:.2f}")
+        print(f"Average value size: {stats['avg_value_size']:.2f}")
+        print(f"Total clients connected: {stats['total_clients']}")
+        print(f"Total operations: {stats['total_operations']}")
+        print(f"Total READs: {stats['total_reads']}")
+        print(f"Total GETs: {stats['total_gets']}")
+        print(f"Total PUTs: {stats['total_puts']}")
+        print(f"Total errors: {stats['total_errors']}")
+        print("---------------------------------\n")
+
+
+
