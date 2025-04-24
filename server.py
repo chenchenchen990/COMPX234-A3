@@ -163,7 +163,12 @@ def handle_client(client_socket, addr, tuple_space):
                 error_message = str(pe)
                 response = f"{len(error_message) + 8:03d} ERR {error_message}"
                 client_socket.send(response.encode())
-
+    except ConnectionResetError:
+        logging.info(f"Connection reset by {addr}")
+    except ConnectionAbortedError:
+        logging.info(f"Connection aborted by {addr}")
+    except BrokenPipeError:
+        logging.info(f"Broken pipe with {addr}")
     except Exception as e:
         logging.error(f"Error handling client {addr}: {e}")
     finally:
