@@ -127,20 +127,6 @@ def handle_client(client_socket, addr, tuple_space):
     logging.info(f"New connection from {addr}")
 
     try:
-        # Client handling will be implemented here
-        pass
-    except Exception as e:
-        logging.error(f"Error handling client {addr}: {e}")
-    finally:
-        client_socket.close()
-        logging.info(f"Connection from {addr} closed")
-
-
-def handle_client(client_socket, addr, tuple_space):
-    """Handle a single client connection."""
-    logging.info(f"New connection from {addr}")
-
-    try:
         while True:
             # Receive the message size (first 3 bytes)
             size_bytes = client_socket.recv(3)
@@ -260,6 +246,7 @@ def handle_client(client_socket, addr, tuple_space):
             raise ProtocolError("Invalid PUT format, missing value")
     else:
         raise ProtocolError(f"Unknown command '{command}'")
+
     # Send the response
     client_socket.send(response.encode())
 
@@ -282,6 +269,30 @@ def display_statistics(tuple_space):
         print(f"Total PUTs: {stats['total_puts']}")
         print(f"Total errors: {stats['total_errors']}")
         print("---------------------------------\n")
+
+
+def shutdown_server(server_socket, tuple_space):
+    """Properly shut down the server."""
+    print("\nShutting down server...")
+
+    # Print final statistics
+    stats = tuple_space.get_statistics()
+    print("\n----- Final Tuple Space Statistics -----")
+    print(f"Number of tuples: {stats['num_tuples']}")
+    print(f"Average tuple size: {stats['avg_tuple_size']:.2f}")
+    print(f"Average key size: {stats['avg_key_size']:.2f}")
+    print(f"Average value size: {stats['avg_value_size']:.2f}")
+    print(f"Total clients connected: {stats['total_clients']}")
+    print(f"Total operations: {stats['total_operations']}")
+    print(f"Total READs: {stats['total_reads']}")
+    print(f"Total GETs: {stats['total_gets']}")
+    print(f"Total PUTs: {stats['total_puts']}")
+    print(f"Total errors: {stats['total_errors']}")
+    print("---------------------------------------")
+
+    # Close the server socket
+    if server_socket:
+        server_socket.close()
 
 
 
