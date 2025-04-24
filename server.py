@@ -295,4 +295,26 @@ def shutdown_server(server_socket, tuple_space):
         server_socket.close()
 
 
+def main():
+    """Main function to run the server."""
+    if len(sys.argv) != 2:
+        print("Usage: python server.py <port>")
+        return
+
+    try:
+        port = int(sys.argv[1])
+        if not (50000 <= port <= 59999):
+            print("Port must be between 50000 and 59999")
+            return
+    except ValueError:
+        print("Port must be an integer")
+        return
+
+    # Server initialization will be implemented here
+
+
+if __name__ == "__main__":
+    main()
+
+
 
