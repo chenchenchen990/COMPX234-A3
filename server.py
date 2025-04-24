@@ -309,8 +309,27 @@ def main():
     except ValueError:
         print("Port must be an integer")
         return
+        # Create the tuple space
+        tuple_space = TupleSpace()
 
-    # Server initialization will be implemented here
+        # Create server socket
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        try:
+            server_socket.bind(('0.0.0.0', port))
+            server_socket.listen(5)
+            logging.info(f"Server started on port {port}")
+
+            # More server code will be implemented here
+
+        except KeyboardInterrupt:
+            shutdown_server(server_socket, tuple_space)
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            shutdown_server(server_socket, tuple_space)
+        finally:
+            server_socket.close()
 
 
 if __name__ == "__main__":
