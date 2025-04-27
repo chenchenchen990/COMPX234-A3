@@ -334,7 +334,6 @@ def main():
                 client_thread.start()
 
 
-            # More server code will be implemented here
 
         except KeyboardInterrupt:
             shutdown_server(server_socket, tuple_space)
@@ -350,5 +349,20 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+def read(self, key):
+    """
+    Read a tuple's value without removing it.
+    Returns (value, True) if successful, (None, False) if the key doesn't exist.
+    """
+    with self.lock:  # Ensure thread safety for all operations
+        self.total_operations += 1
+        self.total_reads += 1
+
+        if key not in self.tuples:
+            self.total_errors += 1
+            return None, False  # Error: key does not exist
+
+        return self.tuples[key], True  # Success
 
 
