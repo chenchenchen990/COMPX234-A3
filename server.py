@@ -330,8 +330,10 @@ def main():
             shutdown_server(server_socket, tuple_space)
         finally:
             server_socket.close()
-
-
+    # Start statistics display thread
+    stats_thread = threading.Thread(target=display_statistics, args=(tuple_space,), daemon=True)
+    stats_thread.start()
+  
 if __name__ == "__main__":
     main()
 
