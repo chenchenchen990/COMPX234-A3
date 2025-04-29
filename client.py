@@ -70,7 +70,11 @@ def main():
                     continue
 
                 s.sendall(msg.encode())
-                
+
+                # Receive the 3-byte header
+                size = s.recv(3)
+                if not size:
+                    break
 
 
 
