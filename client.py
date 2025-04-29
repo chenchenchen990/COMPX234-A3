@@ -79,6 +79,14 @@ def main():
                 remaining = total_size - 3
                 data = b""
 
+                # Receive the rest of the message
+                while remaining > 0:
+                    chunk = s.recv(remaining)
+                    if not chunk:
+                        break
+                    data += chunk
+                    remaining -= len(chunk)
+
 
 
 
