@@ -10,3 +10,6 @@ def run_all_clients():
         file_path = f"{base_path}\\client_{i}.txt"
         print(f"\n--- Running client {i} ---")
         subprocess.run(["python", "client.py", host, str(port), file_path])
+
+if __name__ == "__main__":
+    run_all_clients()
