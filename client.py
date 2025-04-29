@@ -10,3 +10,5 @@ def create_message(command, key, value=None):
     if command == "PUT":
         if not value:
             return None
+        data = f"{key} {value}"
+        message = f"P {data}"
