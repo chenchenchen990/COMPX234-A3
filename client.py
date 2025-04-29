@@ -50,3 +50,9 @@ def main():
                 if not line:
                     continue
 
+                parts = line.split(" ", 2)
+                if len(parts) < 2:
+                    print(f"Invalid line: {line}")
+                    continue
+                
+
