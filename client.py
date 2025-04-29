@@ -54,5 +54,10 @@ def main():
                 if len(parts) < 2:
                     print(f"Invalid line: {line}")
                     continue
+
+                command = parts[0]
+                key = parts[1]
+                value = parts[2] if command == "PUT" and len(parts) > 2 else None
+
                 
 
