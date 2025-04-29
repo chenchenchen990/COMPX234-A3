@@ -92,6 +92,8 @@ def main():
 
     except ConnectionRefusedError:
         print("Connection refused. Make sure the server is running.")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 
