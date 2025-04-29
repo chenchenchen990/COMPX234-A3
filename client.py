@@ -14,3 +14,5 @@ def create_message(command, key, value=None):
         message = f"P {data}"
     elif command == "GET":
         message = f"G {key}"
+    elif command == "READ":
+        message = f"R {key}"
