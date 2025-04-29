@@ -18,3 +18,7 @@ def create_message(command, key, value=None):
         message = f"R {key}"
     else:
         return None
+
+    # Construct the final message without a space after size
+    full_message = f"{len(message) + 3:03d}{message}"
+    return full_message
