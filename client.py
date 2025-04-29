@@ -75,6 +75,9 @@ def main():
                 size = s.recv(3)
                 if not size:
                     break
+                total_size = int(size.decode())
+                remaining = total_size - 3
+                data = b""
 
 
 
