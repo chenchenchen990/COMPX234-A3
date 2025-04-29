@@ -31,3 +31,6 @@ def main():
     - Sends request and waits for response before next (synchronous)
     - Displays server's response for each line
     """
+    if len(sys.argv) != 4:
+        print("Usage: python client.py <host> <port> <input_file>")
+        sys.exit(1)
