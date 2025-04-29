@@ -34,3 +34,7 @@ def main():
     if len(sys.argv) != 4:
         print("Usage: python client.py <host> <port> <input_file>")
         sys.exit(1)
+
+    host = sys.argv[1]
+    port = int(sys.argv[2])
+    input_file = sys.argv[3]
