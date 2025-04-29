@@ -90,6 +90,9 @@ def main():
                     response = data.decode()
                     print(f"{line}: {response.strip()}")
 
+    except ConnectionRefusedError:
+        print("Connection refused. Make sure the server is running.")
+
 
 
 
