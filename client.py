@@ -22,3 +22,12 @@ def create_message(command, key, value=None):
     # Construct the final message without a space after size
     full_message = f"{len(message) + 3:03d}{message}"
     return full_message
+
+def main():
+    """
+    Main client function:
+    - Connects to the server
+    - Reads commands from a file line by line
+    - Sends request and waits for response before next (synchronous)
+    - Displays server's response for each line
+    """
