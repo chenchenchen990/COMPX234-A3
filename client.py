@@ -69,6 +69,9 @@ def main():
                     print(f"Invalid command: {line}")
                     continue
 
+                s.sendall(msg.encode())
+                
+
 
 
 
