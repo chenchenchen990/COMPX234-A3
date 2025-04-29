@@ -87,6 +87,11 @@ def main():
                     data += chunk
                     remaining -= len(chunk)
 
+                    response = data.decode()
+                    print(f"{line}: {response.strip()}")
+
+
+
 
 
 
