@@ -59,5 +59,11 @@ def main():
                 key = parts[1]
                 value = parts[2] if command == "PUT" and len(parts) > 2 else None
 
-                
+                if command == "PUT" and value:
+                    if len(key) + len(value) + 1 > 970:
+                        print(f"PUT {key} {value}: ERROR too long, ignored")
+                        continue
+
+
+
 
