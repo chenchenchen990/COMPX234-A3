@@ -42,3 +42,11 @@ def main():
     if not os.path.isfile(input_file):
         print(f"Error: File '{input_file}' not found.")
         sys.exit(1)
+
+    try:
+        with socket.create_connection((host, port)) as s, open(input_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+
