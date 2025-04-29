@@ -38,3 +38,7 @@ def main():
     host = sys.argv[1]
     port = int(sys.argv[2])
     input_file = sys.argv[3]
+
+    if not os.path.isfile(input_file):
+        print(f"Error: File '{input_file}' not found.")
+        sys.exit(1)
