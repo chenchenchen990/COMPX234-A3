@@ -64,6 +64,12 @@ def main():
                         print(f"PUT {key} {value}: ERROR too long, ignored")
                         continue
 
+                msg = create_message(command, key, value)
+                if not msg:
+                    print(f"Invalid command: {line}")
+                    continue
+
+
 
 
 
