@@ -114,6 +114,7 @@ class TupleSpace:
                 "total_puts": self.total_puts,
                 "total_errors": self.total_errors
             }
+        
 
 
 def handle_client(client_socket, addr, tuple_space):
