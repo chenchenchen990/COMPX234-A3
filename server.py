@@ -20,14 +20,6 @@ class ProtocolError(Exception):
     """Exception raised for errors in the protocol format."""
     pass
 
-class TupleSpace:
-    """Represents the tuple space with thread-safe operations."""
-
-    def __init__(self):
-        """Initialize an empty tuple space."""
-        self.tuples = {}  # Dictionary to store key-value pairs
-        self.lock = threading.Lock()  # Lock for thread safety
-
 
 class TupleSpace:
     """Represents the tuple space with thread-safe operations."""
