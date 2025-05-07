@@ -37,81 +37,83 @@ class TupleSpace:
         self.total_puts = 0
         self.total_errors = 0
 
+    def put(self, key, value):
+        """
+        Add a new tuple to the space if the key doesn't exist.
+        Returns 0 if successful, 1 if the key already exists.
+        """
+        with self.lock:
+            self.total_operations += 1
+            self.total_puts += 1
 
-def put(self, key, value):
-    """
-    Add a new tuple to the space if the key doesn't exist.
-    Returns 0 if successful, 1 if the key already exists.
-    """
-    with self.lock:
-        self.total_operations += 1
-        self.total_puts += 1
+            if key in self.tuples:
+                self.total_errors += 1
+                return 1  # Error: key already exists
 
-        if key in self.tuples:
-            self.total_errors += 1
-            return 1  # Error: key already exists
+            self.tuples[key] = value
+            return 0  # Success
 
-        self.tuples[key] = value
-        return 0  # Success
+    def get(self, key):
+        """
+        Remove a tuple from the space and return its value.
+        Returns (value, True) if successful, (None, False) if the key doesn't exist.
+        """
+        with self.lock:
+            self.total_operations += 1
+            self.total_gets += 1
 
+            # Use get method with default to avoid KeyError
+            value = self.tuples.get(key)
+            if value is None:
+                self.total_errors += 1
+                return None, False  # Error: key does not exist
 
-def get(self, key):
-    """
-    Remove a tuple from the space and return its value.
-    Returns (value, True) if successful, (None, False) if the key doesn't exist.
-    """
-    with self.lock:
-        self.total_operations += 1
-        self.total_gets += 1
+            # Key exists, remove it
+            del self.tuples[key]
+            return value, True  # Success
 
-        if key not in self.tuples:
-            self.total_errors += 1
-            return None, False  # Error: key does not exist
+    def read(self, key):
+        """
+        Read a tuple's value without removing it.
+        Returns (value, True) if successful, (None, False) if the key doesn't exist.
+        """
+        with self.lock:
+            self.total_operations += 1
+            self.total_reads += 1
 
-        value = self.tuples[key]
-        del self.tuples[key]
-        return value, True  # Success
+            if key not in self.tuples:
+                self.total_errors += 1
+                return None, False  # Error: key does not exist
 
+            return self.tuples[key], True  # Success
 
-def read(self, key):
-    """
-    Read a tuple's value without removing it.
-    Returns (value, True) if successful, (None, False) if the key doesn't exist.
-    """
-    with self.lock:
-        self.total_operations += 1
-        self.total_reads += 1
+    def get_statistics(self):
+        """Return statistics about the tuple space."""
+        with self.lock:
+            num_tuples = len(self.tuples)
 
-        if key not in self.tuples:
-            self.total_errors += 1
-            return None, False  # Error: key does not exist
+            # Calculate average sizes
+            if num_tuples > 0:
+                avg_key_size = sum(len(k) for k in self.tuples.keys()) / num_tuples
+                avg_value_size = sum(len(v) for v in self.tuples.values()) / num_tuples
+                avg_tuple_size = avg_key_size + avg_value_size
+            else:
+                avg_key_size = 0
+                avg_value_size = 0
+                avg_tuple_size = 0
 
-        return self.tuples[key], True  # Success
-def get_statistics(self):
-    """Return statistics about the tuple space."""
-    with self.lock:
-        num_tuples = len(self.tuples)
-        # Calculate average sizes
-        if num_tuples > 0:
-            avg_key_size = sum(len(k) for k in self.tuples.keys()) / num_tuples
-            avg_value_size = sum(len(v) for v in self.tuples.values()) / num_tuples
-            avg_tuple_size = avg_key_size + avg_value_size
-        else:
-            avg_key_size = 0
-            avg_value_size = 0
-            avg_tuple_size = 0
-        return {
-            "num_tuples": num_tuples,
-            "avg_tuple_size": avg_tuple_size,
-            "avg_key_size": avg_key_size,
-            "avg_value_size": avg_value_size,
-            "total_clients": self.total_clients,
-            "total_operations": self.total_operations,
-            "total_reads": self.total_reads,
-            "total_gets": self.total_gets,
-            "total_puts": self.total_puts,
-            "total_errors": self.total_errors
-        }
+            return {
+                "num_tuples": num_tuples,
+                "avg_tuple_size": avg_tuple_size,
+                "avg_key_size": avg_key_size,
+                "avg_value_size": avg_value_size,
+                "total_clients": self.total_clients,
+                "total_operations": self.total_operations,
+                "total_reads": self.total_reads,
+                "total_gets": self.total_gets,
+                "total_puts": self.total_puts,
+                "total_errors": self.total_errors
+            }
 
 
 def handle_client(client_socket, addr, tuple_space):
