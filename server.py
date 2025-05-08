@@ -346,35 +346,6 @@ def main():
     finally:
         server_socket.close()
 
-        try:
-            server_socket.bind(('0.0.0.0', port))
-            server_socket.listen(5)
-            logging.info(f"Server started on port {port}")
-            while True:
-                # Accept a client connection
-                client_socket, addr = server_socket.accept()
-
-                # Increment the client counter
-                with tuple_space.lock:
-                    tuple_space.total_clients += 1
-
-                # Start a new thread to handle the client
-                client_thread = threading.Thread(target=handle_client, args=(client_socket, addr, tuple_space))
-                client_thread.daemon = True
-                client_thread.start()
-
-
-
-        except KeyboardInterrupt:
-            shutdown_server(server_socket, tuple_space)
-        except Exception as e:
-            logging.error(f"Error: {e}")
-            shutdown_server(server_socket, tuple_space)
-        finally:
-            server_socket.close()
-    # Start statistics display thread
-    stats_thread = threading.Thread(target=display_statistics, args=(tuple_space,), daemon=True)
-    stats_thread.start()
 
 if __name__ == "__main__":
     main()
