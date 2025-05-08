@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 COMPX234-A3: Tuple Space Server
 A server implementing a tuple space using TCP sockets and multi-threading.
