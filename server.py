@@ -364,39 +364,9 @@ if __name__ == "__main__":
     main()
 
 
-def read(self, key):
-    """
-    Read a tuple's value without removing it.
-    Returns (value, True) if successful, (None, False) if the key doesn't exist.
-    """
-    with self.lock:  # Ensure thread safety for all operations
-        self.total_operations += 1
-        self.total_reads += 1
-
-        if key not in self.tuples:
-            self.total_errors += 1
-            return None, False  # Error: key does not exist
-
-        return self.tuples[key], True  # Success
 
 
-def get(self, key):
-    """
-    Remove a tuple from the space and return its value.
-    Returns (value, True) if successful, (None, False) if the key doesn't exist.
-    """
-    with self.lock:
-        self.total_operations += 1
-        self.total_gets += 1
 
-        # Use get method with default to avoid KeyError
-        value = self.tuples.get(key)
-        if value is None:
-            self.total_errors += 1
-            return None, False  # Error: key does not exist
 
-        # Key exists, remove it
-        del self.tuples[key]
-        return value, True  # Success
 
 
