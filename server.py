@@ -295,9 +295,25 @@ def shutdown_server(server_socket, tuple_space):
 
 def main():
     """Main function to run the server."""
-    if len(sys.argv) != 2:
-        print("Usage: python server.py <port>")
-        return
+    # Set default port if no argument provided
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+            if not (50000 <= port <= 59999):
+                print("Port must be between 50000 and 59999, using default port 51234")
+                port = 51234
+        except ValueError:
+            print("Invalid port number, using default port 51234")
+            port = 51234
+    else:
+        port = 51234
+
+    # Create the tuple space
+    tuple_space = TupleSpace()
+
+    # Create server socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     try:
         port = int(sys.argv[1])
