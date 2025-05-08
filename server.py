@@ -2,21 +2,21 @@
 """
 COMPX234-A3: Tuple Space Server
 A server implementing a tuple space using TCP sockets and multi-threading.
-
-This server maintains a collection of key-value pairs (tuples) and allows
-clients to perform operations on them (PUT, GET, READ) via a network protocol.
 """
 import socket
 import threading
 import time
 import sys
 import logging
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
+
 class ProtocolError(Exception):
     """Exception raised for errors in the protocol format."""
     pass
@@ -115,7 +115,6 @@ class TupleSpace:
                 "total_puts": self.total_puts,
                 "total_errors": self.total_errors
             }
-        
 
 
 def handle_client(client_socket, addr, tuple_space):
@@ -139,12 +138,104 @@ def handle_client(client_socket, addr, tuple_space):
                 if message_size < 7 or message_size > 999:
                     raise ProtocolError("Message size must be between 7 and 999")
 
-                # Rest of the message handling will be implemented here
+                # Calculate how many more bytes we need to receive
+                remaining_bytes = message_size - 3
+
+                if remaining_bytes <= 0:
+                    raise ProtocolError("Invalid message size")
+
+                # Receive the command and the rest of the message
+                command_and_data = b""
+                bytes_received = 0
+
+                # Keep receiving until we get all the data or socket closes
+                while bytes_received < remaining_bytes:
+                    chunk = client_socket.recv(min(1024, remaining_bytes - bytes_received))
+                    if not chunk:  # Socket closed
+                        return
+                    command_and_data += chunk
+                    bytes_received += len(chunk)
+
+                # Decode the data
+                try:
+                    command_and_data = command_and_data.decode()
+                except UnicodeDecodeError:
+                    raise ProtocolError("Invalid message encoding")
+
+                # Parse the command
+                if not command_and_data or len(command_and_data) < 1:
+                    raise ProtocolError("Missing command")
+
+                command = command_and_data[0]
+
+                # Ensure there's a space after the command
+                if len(command_and_data) > 1 and command_and_data[1] != ' ':
+                    raise ProtocolError("Expected space after command")
+
+                # Get the data part (skip the space if present)
+                data = command_and_data[2:] if len(command_and_data) > 2 else ""
+
+                response = ""
+
+                # Process commands
+                if command == 'R':  # READ
+                    key = data
+                    value, success = tuple_space.read(key)
+
+                    if success:
+                        response_text = f"OK ({key}, {value}) read"
+                    else:
+                        response_text = f"ERR {key} does not exist"
+
+                    response = f"{len(response_text) + 4:03d} {response_text}"
+
+                elif command == 'G':  # GET
+                    key = data
+                    value, success = tuple_space.get(key)
+
+                    if success:
+                        response_text = f"OK ({key}, {value}) removed"
+                    else:
+                        response_text = f"ERR {key} does not exist"
+
+                    response = f"{len(response_text) + 4:03d} {response_text}"
+
+                elif command == 'P':  # PUT
+                    # Split key and value
+                    space_pos = data.find(' ')
+                    if space_pos != -1:
+                        key = data[:space_pos]
+                        value = data[space_pos + 1:]
+
+                        # Validate key and value lengths
+                        if len(key) > 999:
+                            raise ProtocolError("Key too long (max 999 characters)")
+
+                        if len(key) + len(value) + 1 > 970:  # +1 for the space between them
+                            raise ProtocolError("Key and value combined too long (max 970 characters)")
+
+                        result = tuple_space.put(key, value)
+
+                        if result == 0:
+                            response_text = f"OK ({key}, {value}) added"
+                        else:
+                            response_text = f"ERR {key} already exists"
+
+                        response = f"{len(response_text) + 4:03d} {response_text}"
+                    else:
+                        raise ProtocolError("Invalid PUT format, missing value")
+
+                else:
+                    raise ProtocolError(f"Unknown command '{command}'")
+
+                # Send the response
+                client_socket.send(response.encode())
 
             except ProtocolError as pe:
                 error_message = str(pe)
                 response = f"{len(error_message) + 8:03d} ERR {error_message}"
                 client_socket.send(response.encode())
+
     except ConnectionResetError:
         logging.info(f"Connection reset by {addr}")
     except ConnectionAbortedError:
@@ -156,95 +247,6 @@ def handle_client(client_socket, addr, tuple_space):
     finally:
         client_socket.close()
         logging.info(f"Connection from {addr} closed")
-    # Calculate how many more bytes we need to receive
-    remaining_bytes = message_size - 3
-
-    if remaining_bytes <= 0:
-        raise ProtocolError("Invalid message size")
-
-    # Receive the command and the rest of the message
-    command_and_data = b""
-    bytes_received = 0
-
-    # Keep receiving until we get all the data or socket closes
-    while bytes_received < remaining_bytes:
-        chunk = client_socket.recv(min(1024, remaining_bytes - bytes_received))
-        if not chunk:  # Socket closed
-            return
-        command_and_data += chunk
-        bytes_received += len(chunk)
-
-    # Decode the data
-    try:
-        command_and_data = command_and_data.decode()
-    except UnicodeDecodeError:
-        raise ProtocolError("Invalid message encoding")
-    # Parse the command
-    if not command_and_data or len(command_and_data) < 1:
-        raise ProtocolError("Missing command")
-
-    command = command_and_data[0]
-
-    # Ensure there's a space after the command
-    if len(command_and_data) > 1 and command_and_data[1] != ' ':
-        raise ProtocolError("Expected space after command")
-
-    # Get the data part (skip the space if present)
-    data = command_and_data[2:] if len(command_and_data) > 2 else ""
-
-    response = ""
-
-    # Command processing will be implemented here
-    # Process commands
-    if command == 'R':  # READ
-        key = data
-        value, success = tuple_space.read(key)
-
-        if success:
-            response_text = f"OK ({key}, {value}) read"
-        else:
-            response_text = f"ERR {key} does not exist"
-
-        response = f"{len(response_text) + 4:03d} {response_text}"
-    elif command == 'G':  # GET
-        key = data
-        value, success = tuple_space.get(key)
-
-        if success:
-            response_text = f"OK ({key}, {value}) removed"
-        else:
-            response_text = f"ERR {key} does not exist"
-
-        response = f"{len(response_text) + 4:03d} {response_text}"
-    elif command == 'P':  # PUT
-        # Split key and value
-        space_pos = data.find(' ')
-        if space_pos != -1:
-            key = data[:space_pos]
-            value = data[space_pos + 1:]
-
-            # Validate key and value lengths
-            if len(key) > 999:
-                raise ProtocolError("Key too long (max 999 characters)")
-
-            if len(key) + len(value) + 1 > 970:  # +1 for the space between them
-                raise ProtocolError("Key and value combined too long (max 970 characters)")
-
-            result = tuple_space.put(key, value)
-
-            if result == 0:
-                response_text = f"OK ({key}, {value}) added"
-            else:
-                response_text = f"ERR {key} already exists"
-
-            response = f"{len(response_text) + 4:03d} {response_text}"
-        else:
-            raise ProtocolError("Invalid PUT format, missing value")
-    else:
-        raise ProtocolError(f"Unknown command '{command}'")
-
-    # Send the response
-    client_socket.send(response.encode())
 
 
 def display_statistics(tuple_space):
