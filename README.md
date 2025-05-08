@@ -99,7 +99,7 @@ NNN ERR k does not exist    # For READ/GET when key doesn't exist
    Error management
 
 3. **Statistics Display**
-   Displays current tuple space statistics
+   Every 10 seconds,displays current tuple space statistics
    Shows tuple counts, average sizes, operation counts
 
 ### 5.4 Client Implementation
@@ -157,7 +157,7 @@ PUT microphoning the transduction of sound waves into electrical waves (by a mic
 PUT ventricular_fold either of the upper two vocal cords that are not involved in vocalization: OK (ventricular_fold, either of the upper two vocal cords that are not involved in vocalization) added
 ```
 
-The server displays statistics:
+Every 10 seconds during execution, the server displays statistics:
 
 ```
 ----- Tuple Space Statistics -----
